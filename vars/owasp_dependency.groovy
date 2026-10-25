@@ -1,22 +1,17 @@
 
 def call() {
-    def owaspHome = tool 'OWASP'
-
-    withCredentials([
-        string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')
-    ]) {
-        withEnv(["OWASP_HOME=${owaspHome}"]) {
-            sh '''
-                set +x
-
-                "$OWASP_HOME/bin/dependency-check.sh" \
-                  --scan ./ \
-                  --format XML \
-                  --out . \
-                  --nvdApiKey "$NVD_API_KEY"
-            '''
-        }
-    }
+    dependencyCheck(
+        odcInstallation: 'OWASP',
+        nvdCredentialsId: 'nvd-api-key',
+        additionalArguments: '''
+            --scan .
+            --format XML
+            --out .
+            --nvdApiDelay 6000
+            --nvdMaxRetryCount 10
+            --log dependency-check-debug.log
+        '''
+    )
 
     dependencyCheckPublisher(
         pattern: '**/dependency-check-report.xml'
