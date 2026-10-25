@@ -1,7 +1,6 @@
-
 def call() {
     dependencyCheck(
-        additionalArguments: '--scan ./ --format XML',
+        additionalArguments: '--scan ./ --format XML --out .',
         odcInstallation: 'OWASP',
         nvdCredentialsId: 'nvd-api-key'
     )
